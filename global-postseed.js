@@ -1,6 +1,22 @@
 var cmaze = new MazeBoard(window["jam-map"]);
 workspace=window["blockly-workspace"]
 
+
+var div=document.getElementById("canvasDiv")
+var buttonsdiv = document.createElement('div');
+buttonsdiv.style = "position : absolute; top: 20px; right: 20px; padding:0;"
+
+var runbutton = document.createElement('button');
+runbutton.classList.add("action-button")
+runbutton.innerText = "Run blocks"
+var stopbutton = document.createElement('button');
+stopbutton.classList.add("action-button")
+stopbutton.innerText = "🛑"
+runbutton.style="color:green;"
+buttonsdiv.appendChild(runbutton)
+buttonsdiv.appendChild(stopbutton)
+div.appendChild(buttonsdiv)
+
 function drawCanvas() {
 	var c = document.getElementById("jam-canvas");
 	var ctx = c.getContext("2d");
@@ -231,6 +247,7 @@ function execute() {
                          }, 100);
                          setTimeout(() => {
                               workspace.highlightBlock(null);
+                              runbutton.disabled = false;
                          }, 1000);
                          return;
                     }
@@ -238,33 +255,17 @@ function execute() {
           }, 250);
      } catch (_err) {
           console.error(_err);
+          runbutton.disabled = false;
           window.alert('CATASTROPHIC ERROR!\n'+_err)
      }
 }
 
 
 function run() {
-     cmaze.reset()
+     cmaze.reset();
+     runbutton.disabled = true;
      execute();
 }
 
-
-var div=document.getElementById("canvasDiv")
-var buttonsdiv = document.createElement('div');
-buttonsdiv.style = "position : absolute; top: 20px; right: 20px; padding:0;"
-
-var runbutton = document.createElement('button');
-runbutton.classList.add("action-button")
-runbutton.innerText = "Run blocks"
-runbutton.style="color:green;"
 runbutton.onclick = run;
-var stopbutton = document.createElement('button');
-stopbutton.classList.add("action-button")
-stopbutton.innerText = "🛑"
-stopbutton.onclick = function () {clearInterval(runningInterval);setTimeout(() => {workspace.highlightBlock(null);}, 1000);};
-
-buttonsdiv.appendChild(runbutton)
-buttonsdiv.appendChild(stopbutton)
-
-
-div.appendChild(buttonsdiv)
+stopbutton.onclick = function () {clearInterval(runningInterval);setTimeout(() => {workspace.highlightBlock(null);runbutton.disabled = false;}, 1000);};
